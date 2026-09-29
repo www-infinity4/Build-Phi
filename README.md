@@ -30,3 +30,24 @@ Similar-item searches route to `https://www-infinity4.github.io/Shop-Phi/?q=<lis
 ## Source of truth
 
 This repository owns the portable ad-card contract. Live Phi apps may carry synchronized copies until the shared package is imported directly.
+
+
+## Automatic advertisement image cleanup
+
+Every advertisement should pass through the Build Phi media-cleanup stage before publication. The presentation contract is:
+- prefer transparent PNG/WebP product cutouts when a source supplies them;
+- remove flat/white product-photo backdrops when this can be done without cutting into the item;
+- crop excess empty margins and center the product;
+- preserve the actual product pixels, toning, condition, labels and identifying details rather than cosmetically inventing condition;
+- render the cleaned asset on the advertisement card's own background rather than a white image panel;
+- keep the original source URL and image-rights/provenance metadata with the cleaned derivative.
+
+The current Mercury-dime reference card removes its white card panel and uses product-image blending as the non-destructive live fallback. A production media worker should create a transparent derivative and store it beside the ad asset.
+
+## Collection rewards and cart
+
+Control Phi is the StarCoin authority for advertisement actions. Collect writes the ad snapshot to `infinity_phi_shop_cart_v1`, emits `infinity-shop-cart-updated`, and calls `ControlPhi.ensureActionCredit(listingId, "collect")`. Control Phi deduplicates by listing ID. Each unique collection is one tenth of a StarCoin; every ten credits become one whole StarCoin.
+
+Control Phi also reconciles the existing cart at startup, so saved historical collections that do not yet have ledger entries receive their owed collect credits exactly once.
+
+The Control Phi hamburger's Unified Wallet section contains **Shopping Cart**, which opens the collected-ad view in Shop Phi.
